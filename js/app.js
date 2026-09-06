@@ -12,6 +12,7 @@
       github: "#",
       x: "#",
       instagram: "#",
+      linkedin: "#",
     },
   };
 
@@ -134,16 +135,14 @@
 
     article.innerHTML = `
       <p class="app-index" aria-hidden="true">${number}</p>
-      <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="120" height="120" loading="lazy" />
-      <div class="app-body">
-        <div class="app-body-top">
-          <h3 class="app-name">${name}</h3>
-          ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
-        </div>
-        ${actionHtml}
-        ${description ? `<p class="app-description">${description}</p>` : ""}
-        ${qrBlock}
+      <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="110" height="110" loading="lazy" />
+      <div class="app-titles">
+        <h3 class="app-name">${name}</h3>
+        ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
       </div>
+      ${description ? `<p class="app-description">${description}</p>` : `<p class="app-description"></p>`}
+      ${actionHtml}
+      ${qrBlock}
     `;
 
     const openBtn = article.querySelector(".js-open-app");
