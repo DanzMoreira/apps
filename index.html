@@ -3,27 +3,27 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Meus Apps · Danz Moreira</title>
+    <title>Apps · Danz Moreira</title>
     <meta
       name="description"
-      content="Hub público dos aplicativos independentes de Danz Moreira — iPhone e web."
+      content="Pequenas ideias transformadas em produtos — portfólio de apps de Danz Moreira."
     />
-    <meta name="theme-color" content="#FAFAFA" />
+    <meta name="theme-color" content="#FAF8F4" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Meus Apps · Danz Moreira" />
+    <meta property="og:title" content="Apps · Danz Moreira" />
     <meta
       property="og:description"
-      content="Aplicativos e projetos independentes que desenvolvi."
+      content="Pequenas ideias transformadas em produtos."
     />
     <meta property="og:url" content="https://danzmoreira.github.io/apps/" />
     <meta property="og:image" content="assets/icons/favicon.svg" />
 
     <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="Meus Apps · Danz Moreira" />
+    <meta name="twitter:title" content="Apps · Danz Moreira" />
     <meta
       name="twitter:description"
-      content="Aplicativos e projetos independentes que desenvolvi."
+      content="Pequenas ideias transformadas em produtos."
     />
 
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
@@ -34,19 +34,21 @@
 
     <header class="site-header">
       <div class="shell header-inner">
-        <nav class="social-nav" aria-label="Redes sociais">
+        <a class="site-mark" href="index.html">Danz Moreira</a>
+        <nav class="header-nav" aria-label="Navegação">
+          <a class="nav-link is-active" href="index.html" aria-current="page">Apps</a>
           <a
-            class="social-link"
+            class="nav-link"
             href="#"
             data-social="github"
             rel="noopener noreferrer"
             >GitHub</a
           >
-          <a class="social-link" href="#" data-social="x" rel="noopener noreferrer"
+          <a class="nav-link" href="#" data-social="x" rel="noopener noreferrer"
             >X</a
           >
           <a
-            class="social-link"
+            class="nav-link"
             href="#"
             data-social="instagram"
             rel="noopener noreferrer"
@@ -58,25 +60,47 @@
 
     <main id="conteudo">
       <section class="hero shell" aria-labelledby="hero-title">
-        <h1 id="hero-title">Meus Apps</h1>
-        <p class="hero-lead">
-          Aplicativos e projetos independentes que desenvolvi.
-        </p>
+        <p class="hero-kicker">Apps</p>
+        <h1 id="hero-title">I make apps.</h1>
+        <p class="hero-lead">Pequenas ideias transformadas em produtos.</p>
       </section>
 
       <section class="apps-section shell" aria-label="Lista de aplicativos">
         <p id="apps-status" class="apps-status" role="status" aria-live="polite">
           Carregando aplicativos…
         </p>
-
-        <div id="apps-grid" class="apps-grid" hidden></div>
+        <div id="apps-grid" class="apps-list" hidden></div>
       </section>
     </main>
 
     <footer class="site-footer">
       <div class="shell footer-inner">
-        <p>© <span id="year"></span> Danz Moreira</p>
-        <p class="footer-note">Página estática · GitHub Pages</p>
+        <div class="footer-brand">
+          <p class="footer-name">Danz Moreira</p>
+          <p class="footer-tagline">Apps. Ideias. Impacto.</p>
+        </div>
+        <div class="footer-meta">
+          <nav class="footer-nav" aria-label="Redes sociais">
+            <a
+              class="nav-link"
+              href="#"
+              data-social="github"
+              rel="noopener noreferrer"
+              >GitHub</a
+            >
+            <a class="nav-link" href="#" data-social="x" rel="noopener noreferrer"
+              >X</a
+            >
+            <a
+              class="nav-link"
+              href="#"
+              data-social="instagram"
+              rel="noopener noreferrer"
+              >Instagram</a
+            >
+          </nav>
+          <p class="footer-note">Sempre em desenvolvimento.</p>
+        </div>
       </div>
     </footer>
 

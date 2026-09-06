@@ -97,9 +97,9 @@
     return app.status === "published";
   }
 
-  function createCard(app) {
+  function createCard(app, index) {
     const article = document.createElement("article");
-    article.className = "app-row";
+    article.className = "app-row" + (app.featured ? " is-featured" : "");
     article.dataset.appId = app.id || "";
 
     const name = escapeHtml(app.name || "App");
@@ -108,32 +108,40 @@
     const icon = escapeHtml(app.icon || "");
     const status = app.status || "coming-soon";
     const platform = primaryPlatform(app);
+    const number = String(index + 1).padStart(2, "0");
 
     const qrBlock = hasQrCode(app)
       ? `<figure class="app-qr">
-           <img src="${escapeHtml(app.qrCode.trim())}" alt="QR Code para abrir ${name}" width="80" height="80" />
+           <img src="${escapeHtml(app.qrCode.trim())}" alt="QR Code para abrir ${name}" width="72" height="72" />
            <figcaption>Escaneie para abrir</figcaption>
          </figure>`
       : "";
 
     let actionHtml;
     if (canDownload(app)) {
+      const label = storeLinkLabel(platform);
       actionHtml = `<div class="app-action">
-        <button type="button" class="app-store-link js-open-app">${escapeHtml(storeLinkLabel(platform))}</button>
+        <button type="button" class="app-store-link js-open-app">
+          <span class="link-label">${escapeHtml(label.replace(/\s*→\s*$/, ""))}</span>
+          <span class="link-arrow" aria-hidden="true">→</span>
+        </button>
       </div>`;
     } else if (status === "development") {
-      actionHtml = `<p class="app-status-text">Em desenvolvimento</p>`;
+      actionHtml = `<div class="app-action"><p class="app-status-text">Em desenvolvimento</p></div>`;
     } else {
-      actionHtml = `<p class="app-status-text">Em breve</p>`;
+      actionHtml = `<div class="app-action"><p class="app-status-text">Em breve</p></div>`;
     }
 
     article.innerHTML = `
-      <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="96" height="96" loading="lazy" />
+      <p class="app-index" aria-hidden="true">${number}</p>
+      <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="120" height="120" loading="lazy" />
       <div class="app-body">
-        <h3>${name}</h3>
-        ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
-        ${description ? `<p class="app-description">${description}</p>` : ""}
+        <div class="app-body-top">
+          <h3 class="app-name">${name}</h3>
+          ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
+        </div>
         ${actionHtml}
+        ${description ? `<p class="app-description">${description}</p>` : ""}
         ${qrBlock}
       </div>
     `;
@@ -191,9 +199,11 @@
       }
 
       grid.replaceChildren();
+      let index = 0;
       apps.forEach(function (app) {
         if (app && typeof app === "object") {
-          grid.appendChild(createCard(app));
+          grid.appendChild(createCard(app, index));
+          index += 1;
         }
       });
 
@@ -211,10 +221,6 @@
   }
 
   function init() {
-    const year = document.getElementById("year");
-    if (year) {
-      year.textContent = String(new Date().getFullYear());
-    }
     applySocialLinks();
     loadApps();
   }
