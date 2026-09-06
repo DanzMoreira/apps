@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Meus Apps · Danz Moreira</title>
+    <meta
+      name="description"
+      content="Hub público dos aplicativos independentes de Danz Moreira — iPhone e web."
+    />
+    <meta name="theme-color" content="#0f1f1c" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Meus Apps · Danz Moreira" />
+    <meta
+      property="og:description"
+      content="Aplicativos independentes desenvolvidos para iPhone e web."
+    />
+    <meta property="og:url" content="https://danzmoreira.github.io/apps/" />
+    <meta property="og:image" content="assets/icons/favicon.svg" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Meus Apps · Danz Moreira" />
+    <meta
+      name="twitter:description"
+      content="Aplicativos independentes desenvolvidos para iPhone e web."
+    />
+
+    <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
+
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="shell header-inner">
+        <p class="brand">Meus Apps</p>
+        <nav class="social-nav" aria-label="Redes sociais">
+          <a
+            class="social-link"
+            href="#"
+            data-social="github"
+            rel="noopener noreferrer"
+            >GitHub</a
+          >
+          <a class="social-link" href="#" data-social="x" rel="noopener noreferrer"
+            >X</a
+          >
+          <a
+            class="social-link"
+            href="#"
+            data-social="instagram"
+            rel="noopener noreferrer"
+            >Instagram</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main id="conteudo">
+      <section class="hero shell" aria-labelledby="hero-title">
+        <h1 id="hero-title">Meus Apps</h1>
+        <p class="hero-lead">
+          Aplicativos independentes desenvolvidos para iPhone e web.
+        </p>
+      </section>
+
+      <section class="apps-section shell" aria-labelledby="apps-heading">
+        <div class="section-head">
+          <h2 id="apps-heading">Aplicativos</h2>
+          <p class="section-note">Toque em um app para abrir na loja correspondente.</p>
+        </div>
+
+        <p id="apps-status" class="apps-status" role="status" aria-live="polite">
+          Carregando aplicativos…
+        </p>
+
+        <div id="apps-grid" class="apps-grid" hidden></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <p>© <span id="year"></span> Danz Moreira</p>
+        <p class="footer-note">Página estática · GitHub Pages</p>
+      </div>
+    </footer>
+
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
