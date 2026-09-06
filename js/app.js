@@ -15,19 +15,6 @@
     },
   };
 
-  const STATUS_LABELS = {
-    published: "Disponível",
-    development: "Em desenvolvimento",
-    "coming-soon": "Em breve",
-  };
-
-  const PLATFORM_LABELS = {
-    ios: "iOS",
-    android: "Android",
-    web: "Web",
-    macos: "macOS",
-  };
-
   /**
    * Resolve a URL de abertura do app.
    * Futuro: trocar store URL por https://go.meudominio.com/<id>?src=<source>
@@ -81,12 +68,25 @@
       .replace(/'/g, "&#39;");
   }
 
-  function statusLabel(status) {
-    return STATUS_LABELS[status] || status || "Indefinido";
+  function primaryPlatform(app) {
+    const platforms = Array.isArray(app.platforms) ? app.platforms : [];
+    if (platforms.length) return String(platforms[0]).toLowerCase();
+    if (app.links && app.links.ios) return "ios";
+    if (app.links && app.links.android) return "android";
+    if (app.links && app.links.web) return "web";
+    return "ios";
   }
 
-  function platformLabel(platform) {
-    return PLATFORM_LABELS[platform] || platform;
+  function storeLinkLabel(platform) {
+    switch (String(platform).toLowerCase()) {
+      case "android":
+        return "Ver no Google Play →";
+      case "web":
+        return "Abrir →";
+      case "ios":
+      default:
+        return "Ver na App Store →";
+    }
   }
 
   function hasQrCode(app) {
@@ -99,7 +99,7 @@
 
   function createCard(app) {
     const article = document.createElement("article");
-    article.className = "app-card" + (app.featured ? " is-featured" : "");
+    article.className = "app-row";
     article.dataset.appId = app.id || "";
 
     const name = escapeHtml(app.name || "App");
@@ -107,43 +107,35 @@
     const description = escapeHtml(app.description || "");
     const icon = escapeHtml(app.icon || "");
     const status = app.status || "coming-soon";
-    const statusClass = "pill-status-" + String(status).replace(/\s+/g, "-");
-
-    const platforms = Array.isArray(app.platforms) ? app.platforms : [];
-    const platformPills = platforms
-      .map(
-        (p) =>
-          `<span class="pill">${escapeHtml(platformLabel(p))}</span>`
-      )
-      .join("");
+    const platform = primaryPlatform(app);
 
     const qrBlock = hasQrCode(app)
       ? `<figure class="app-qr">
-           <img src="${escapeHtml(app.qrCode.trim())}" alt="QR Code para abrir ${name}" width="96" height="96" />
+           <img src="${escapeHtml(app.qrCode.trim())}" alt="QR Code para abrir ${name}" width="80" height="80" />
            <figcaption>Escaneie para abrir</figcaption>
          </figure>`
       : "";
 
-    const actionHtml = canDownload(app)
-      ? `<button type="button" class="btn btn-primary js-open-app">Baixar</button>`
-      : `<span class="btn btn-primary is-disabled" aria-disabled="true">Em breve</span>`;
+    let actionHtml;
+    if (canDownload(app)) {
+      actionHtml = `<div class="app-action">
+        <button type="button" class="app-store-link js-open-app">${escapeHtml(storeLinkLabel(platform))}</button>
+      </div>`;
+    } else if (status === "development") {
+      actionHtml = `<p class="app-status-text">Em desenvolvimento</p>`;
+    } else {
+      actionHtml = `<p class="app-status-text">Em breve</p>`;
+    }
 
     article.innerHTML = `
-      <div class="app-card-top">
-        <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="56" height="56" loading="lazy" />
-        <div class="app-titles">
-          <h3>${name}</h3>
-          ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
-        </div>
+      <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="96" height="96" loading="lazy" />
+      <div class="app-body">
+        <h3>${name}</h3>
+        ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
+        ${description ? `<p class="app-description">${description}</p>` : ""}
+        ${actionHtml}
+        ${qrBlock}
       </div>
-      <p class="app-description">${description}</p>
-      <div class="app-meta" aria-label="Informações do aplicativo">
-        ${platformPills}
-        <span class="pill ${statusClass}">${escapeHtml(statusLabel(status))}</span>
-        ${app.featured ? `<span class="pill">Destaque</span>` : ""}
-      </div>
-      <div class="app-actions">${actionHtml}</div>
-      ${qrBlock}
     `;
 
     const openBtn = article.querySelector(".js-open-app");
