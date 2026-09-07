@@ -13,5 +13,20 @@
     "links": {
       "ios": "https://apps.apple.com/br/app/minha-s%C3%A9rie/id6792364521"
     }
+  },
+  {
+    "id": "cosmos",
+    "name": "Cosmos",
+    "subtitle": "Education",
+    "description": "Cosmos traz o universo para o seu bolso, todo dia.\n\n• APOD — a imagem astronômica do dia em destaque, com histórico do mês\n• Recentes — novidades da NASA Image and Video Library\n• Populares — as imagens mais vistas\n•…",
+    "icon": "assets/icons/cosmos.png",
+    "platforms": [
+      "ios"
+    ],
+    "status": "published",
+    "featured": false,
+    "links": {
+      "ios": "https://apps.apple.com/us/app/cosmos/id6792531471?uo=4"
+    }
   }
 ]
