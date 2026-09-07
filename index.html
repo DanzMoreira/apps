@@ -8,7 +8,7 @@
       name="description"
       content="Pequenas ideias transformadas em produtos — portfólio de apps de Danz Moreira."
     />
-    <meta name="theme-color" content="#F7F4EE" />
+    <meta name="theme-color" content="#eceff3" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Apps · Danz Moreira" />
@@ -27,7 +27,13 @@
     />
 
     <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="css/style.css?v=20260906m4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css?v=20260907page1" />
   </head>
   <body>
     <a class="skip-link" href="#conteudo">Ir para o conteúdo</a>
@@ -36,7 +42,9 @@
       <div class="shell header-inner">
         <a class="site-mark" href="index.html">Danz Moreira</a>
         <nav class="header-nav" aria-label="Navegação">
-          <a class="nav-link is-active" href="index.html" aria-current="page">Apps</a>
+          <a class="nav-link is-active" href="index.html" aria-current="page"
+            >Apps</a
+          >
           <a class="nav-link" href="#sobre">Sobre</a>
           <a class="nav-link" href="#contato">Contato</a>
         </nav>
@@ -49,12 +57,20 @@
           <h1 id="hero-title">I make apps.</h1>
           <p class="hero-lead">Pequenas ideias transformadas em produtos.</p>
         </div>
-        <p class="hero-script" aria-hidden="true">
-          Build<br />Create<br />Improve<br />Repeat
+        <p class="hero-manifesto" aria-hidden="true">
+          Build<br />
+          Create<br />
+          Improve<br />
+          Repeat
         </p>
       </section>
 
       <section class="apps-section shell" aria-label="Lista de aplicativos">
+        <div class="apps-section-head">
+          <p class="apps-section-label">Apps</p>
+          <p id="apps-range" class="apps-section-range">00</p>
+        </div>
+
         <p id="apps-status" class="apps-status" role="status" aria-live="polite">
           Carregando aplicativos…
         </p>
@@ -70,24 +86,16 @@
         </div>
         <div class="footer-meta">
           <nav class="footer-social" aria-label="Redes sociais">
-            <a class="social-icon" href="#" data-social="github" aria-label="GitHub" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 2C6.48 2 2 6.58 2 12.26c0 4.52 2.87 8.35 6.84 9.71.5.1.68-.22.68-.48 0-.24-.01-.87-.01-1.7-2.78.62-3.37-1.37-3.37-1.37-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.73 0 0 .84-.27 2.75 1.05A9.3 9.3 0 0 1 12 6.84c.85 0 1.71.12 2.51.35 1.9-1.32 2.74-1.05 2.74-1.05.55 1.42.2 2.47.1 2.73.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .26.18.59.69.48A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2z"/></svg>
-            </a>
-            <a class="social-icon" href="#" data-social="x" aria-label="X" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-6.8 7.78L23 22h-6.4l-5-6.55L5.7 22H2.6l7.28-8.32L1 2h6.56l4.52 5.98L18.9 2zm-1.12 18h1.78L6.34 3.9H4.44L17.78 20z"/></svg>
-            </a>
-            <a class="social-icon" href="#" data-social="instagram" aria-label="Instagram" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7zm5 3.5A4.5 4.5 0 1 1 7.5 12 4.5 4.5 0 0 1 12 7.5zm0 2A2.5 2.5 0 1 0 14.5 12 2.5 2.5 0 0 0 12 9.5zM17.75 6.25a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
-            </a>
-            <a class="social-icon" href="#" data-social="linkedin" aria-label="LinkedIn" rel="noopener noreferrer">
-              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5A2.5 2.5 0 1 1 2.5 6a2.5 2.5 0 0 1 2.48-2.5zM3 8.98h3.96V21H3zm7.2 0H14v1.64h.06c.55-1.04 1.9-2.14 3.91-2.14C21.2 8.48 22 11 22 14.4V21h-3.96v-5.8c0-1.38-.02-3.16-1.93-3.16-1.93 0-2.23 1.5-2.23 3.06V21H10.2z"/></svg>
-            </a>
+            <a href="#" data-social="github">GitHub</a>
+            <a href="#" data-social="x">X</a>
+            <a href="#" data-social="instagram">Instagram</a>
+            <a href="#" data-social="linkedin">LinkedIn</a>
           </nav>
           <p class="footer-note">Sempre em desenvolvimento.</p>
         </div>
       </div>
     </footer>
 
-    <script src="js/app.js?v=20260907via1" defer></script>
+    <script src="js/app.js?v=20260907page1" defer></script>
   </body>
 </html>

@@ -160,21 +160,27 @@
   function storeLinkLabel(platform) {
     switch (String(platform).toLowerCase()) {
       case "android":
-        return "Ver no Google Play →";
+        return "Ver no Google Play";
       case "web":
-        return "Abrir →";
+        return "Abrir";
       case "ios":
       default:
-        return "Ver na App Store →";
+        return "Baixar na App Store";
     }
-  }
-
-  function hasQrCode(app) {
-    return typeof app.qrCode === "string" && app.qrCode.trim() !== "";
   }
 
   function canDownload(app) {
     return app.status === "published";
+  }
+
+  function setAppsRange(count) {
+    var el = document.getElementById("apps-range");
+    if (!el) return;
+    if (!count) {
+      el.textContent = "00";
+      return;
+    }
+    el.textContent = "01 — " + String(count).padStart(2, "0");
   }
 
   function createCard(app, index) {
@@ -183,34 +189,44 @@
     article.dataset.appId = app.id || "";
 
     var name = escapeHtml(app.name || "App");
-    var subtitle = escapeHtml(app.subtitle || "");
+    var category = escapeHtml(app.subtitle || "");
     var description = escapeHtml(app.description || "");
-    var icon = escapeHtml(app.icon || "");
+    var icon = typeof app.icon === "string" ? app.icon.trim() : "";
     var status = app.status || "coming-soon";
     var platform = primaryPlatform(app);
     var number = String(index + 1).padStart(2, "0");
+    var resolvedUrl = resolveAppUrl(app);
 
-    var qrBlock = hasQrCode(app)
-      ? '<figure class="app-qr">' +
-        '<img src="' +
-        escapeHtml(app.qrCode.trim()) +
-        '" alt="QR Code para abrir ' +
+    var iconHtml = icon
+      ? '<img class="app-icon" src="' +
+        escapeHtml(icon) +
+        '" alt="Ícone do aplicativo ' +
         name +
-        '" width="72" height="72" />' +
-        "<figcaption>Escaneie para abrir</figcaption></figure>"
-      : "";
+        '" width="60" height="60" loading="lazy" />'
+      : '<div class="app-icon-ph" aria-hidden="true"></div>';
 
     var actionHtml;
-    if (canDownload(app)) {
-      var label = storeLinkLabel(platform);
-      actionHtml =
-        '<div class="app-action">' +
-        '<button type="button" class="app-store-link js-open-app">' +
-        '<span class="link-label">' +
-        escapeHtml(label.replace(/\s*→\s*$/, "")) +
-        "</span>" +
-        '<span class="link-arrow" aria-hidden="true">→</span>' +
-        "</button></div>";
+    if (canDownload(app) && resolvedUrl && resolvedUrl !== "#") {
+      if (platform === "ios") {
+        actionHtml =
+          '<div class="app-action">' +
+          '<a class="app-store-badge js-open-app" href="' +
+          escapeHtml(resolvedUrl) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          '<img src="assets/badges/app-store-pt-br.svg" width="98" height="33" alt="' +
+          escapeHtml(storeLinkLabel("ios")) +
+          '" />' +
+          "</a></div>";
+      } else {
+        actionHtml =
+          '<div class="app-action">' +
+          '<a class="app-store-badge js-open-app" href="' +
+          escapeHtml(resolvedUrl) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          '<span class="app-status-text">' +
+          escapeHtml(storeLinkLabel(platform)) +
+          "</span></a></div>";
+      }
     } else if (status === "development") {
       actionHtml =
         '<div class="app-action"><p class="app-status-text">Em desenvolvimento</p></div>';
@@ -223,26 +239,25 @@
       '<p class="app-index" aria-hidden="true">' +
       number +
       "</p>" +
-      '<img class="app-icon" src="' +
-      icon +
-      '" alt="Ícone do aplicativo ' +
-      name +
-      '" width="118" height="118" loading="lazy" />' +
+      iconHtml +
       '<div class="app-titles">' +
-      '<h3 class="app-name">' +
+      '<h2 class="app-name">' +
       name +
-      "</h3>" +
-      (subtitle ? '<p class="app-subtitle">' + subtitle + "</p>" : "") +
+      "</h2>" +
+      (category
+        ? '<p class="app-category">' + category + "</p>"
+        : "") +
       "</div>" +
       (description
         ? '<p class="app-description">' + description + "</p>"
         : '<p class="app-description"></p>') +
-      actionHtml +
-      qrBlock;
+      actionHtml;
 
-    var openBtn = article.querySelector(".js-open-app");
-    if (openBtn) {
-      openBtn.addEventListener("click", function () {
+    var openLink = article.querySelector(".js-open-app");
+    if (openLink) {
+      openLink.addEventListener("click", function (event) {
+        // Garante /go com via=pages mesmo se o href estiver desatualizado
+        event.preventDefault();
         openApp(app);
       });
     }
@@ -317,11 +332,13 @@
         }
       });
 
+      setAppsRange(index);
       grid.hidden = false;
       var status = document.getElementById("apps-status");
       if (status) status.hidden = true;
     } catch (err) {
       console.error("Falha ao carregar data/apps.json:", err);
+      setAppsRange(0);
       setStatus(
         "Não foi possível carregar a lista de aplicativos. Tente atualizar a página.",
         true
