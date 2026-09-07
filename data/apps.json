@@ -5,7 +5,9 @@
     "subtitle": "Astronomy Daily",
     "description": "Explore uma nova imagem e descoberta do universo todos os dias.",
     "icon": "assets/icons/cosmos.svg",
-    "platforms": ["ios"],
+    "platforms": [
+      "ios"
+    ],
     "status": "published",
     "featured": true,
     "links": {
@@ -18,11 +20,28 @@
     "subtitle": "Backlog pessoal para desenvolvedores",
     "description": "Organize ideias, bugs e melhorias dos seus projetos.",
     "icon": "assets/icons/dev-backlog.svg",
-    "platforms": ["ios"],
+    "platforms": [
+      "ios"
+    ],
     "status": "published",
     "featured": false,
     "links": {
       "ios": "#"
+    }
+  },
+  {
+    "id": "minha-serie",
+    "name": "Minha série",
+    "subtitle": "Entertainment",
+    "description": "Seu aplicativo de séries favorito a partir de agora! Aproveite nosso grafo, procure pelos seus atores favoritos e descubra files e séries que eles participaram juntos!",
+    "icon": "assets/icons/minha-serie.png",
+    "platforms": [
+      "ios"
+    ],
+    "status": "published",
+    "featured": false,
+    "links": {
+      "ios": "https://apps.apple.com/us/app/minha-s%C3%A9rie/id6792364521?uo=4"
     }
   }
 ]
