@@ -1,20 +1,5 @@
 [
   {
-    "id": "dev-backlog",
-    "name": "Dev Backlog",
-    "subtitle": "Backlog pessoal para desenvolvedores",
-    "description": "Organize ideias, bugs e melhorias dos seus projetos.",
-    "icon": "assets/icons/dev-backlog.svg",
-    "platforms": [
-      "ios"
-    ],
-    "status": "published",
-    "featured": false,
-    "links": {
-      "ios": "#"
-    }
-  },
-  {
     "id": "minha-serie",
     "name": "Minha série",
     "subtitle": "Entertainment",
