@@ -1,13 +1,23 @@
 /**
  * Hub de aplicativos — GitHub Pages
- * Links centralizados em openApp() para facilitar tracking futuro.
+ *
+ * Atribuição de origem (sessionStorage, sem cookies):
+ * - ?src= / ?campaign= na entrada do hub → painel_apps_source / painel_apps_campaign
+ * - Clique em app → /go/{id}?src=...&campaign=...&via=pages
+ * - src explícito novo na URL substitui a atribuição da sessão
+ * - navegação interna sem src preserva a origem armazenada
  */
 
 (function () {
   "use strict";
 
-  /** Ajuste futuro dos links sociais (href="#"" até configurar). */
-  const SITE = {
+  var STORAGE_SOURCE = "painel_apps_source";
+  var STORAGE_CAMPAIGN = "painel_apps_campaign";
+  var PARAM_RE = /^[a-zA-Z0-9._\-]{1,64}$/;
+
+  var SITE = {
+    trackingBaseUrl: "",
+    pagesUrl: "https://danzmoreira.github.io/apps/",
     social: {
       github: "#",
       x: "#",
@@ -16,47 +26,116 @@
     },
   };
 
-  /**
-   * Resolve a URL de abertura do app.
-   * Futuro: trocar store URL por https://go.meudominio.com/<id>?src=<source>
-   */
-  function resolveAppUrl(app, source) {
-    void source; // reservado para tracking (ex.: github-pages)
-    const links = app && app.links ? app.links : {};
-    const platforms = Array.isArray(app.platforms) ? app.platforms : [];
+  function normalizeParam(value, fallback) {
+    if (value == null) return fallback;
+    var cleaned = String(value).trim().toLowerCase().slice(0, 64);
+    if (!cleaned) return fallback;
+    if (!PARAM_RE.test(cleaned)) return fallback;
+    return cleaned;
+  }
 
-    for (const platform of platforms) {
-      const url = links[platform];
-      if (typeof url === "string" && url.trim() !== "") {
+  /**
+   * Captura src/campaign da query.
+   * Regra: src presente na URL → atualiza sessão (nova atribuição explícita).
+   * Sem src → não sobrescreve com direct; preserva o que já estiver na sessão.
+   */
+  function captureTrafficAttribution() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      var srcRaw = params.get("src");
+      var campaignRaw = params.get("campaign");
+
+      if (srcRaw != null && String(srcRaw).trim() !== "") {
+        var src = normalizeParam(srcRaw, "direct");
+        sessionStorage.setItem(STORAGE_SOURCE, src);
+        if (campaignRaw != null && String(campaignRaw).trim() !== "") {
+          var campaign = normalizeParam(campaignRaw, null);
+          if (campaign) {
+            sessionStorage.setItem(STORAGE_CAMPAIGN, campaign);
+          } else {
+            sessionStorage.removeItem(STORAGE_CAMPAIGN);
+          }
+        } else {
+          sessionStorage.removeItem(STORAGE_CAMPAIGN);
+        }
+      }
+    } catch (err) {
+      console.warn("attribution: sessionStorage indisponível", err);
+    }
+  }
+
+  function getStoredSource() {
+    try {
+      return normalizeParam(sessionStorage.getItem(STORAGE_SOURCE), null);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function getStoredCampaign() {
+    try {
+      return normalizeParam(sessionStorage.getItem(STORAGE_CAMPAIGN), null);
+    } catch (err) {
+      return null;
+    }
+  }
+
+  /** Monta URL /go/{id}?src=&campaign=&via=pages */
+  function buildGoUrl(appId) {
+    var base = (SITE.trackingBaseUrl || "").replace(/\/+$/, "");
+    if (!base || !appId) return null;
+
+    var src = getStoredSource() || "direct";
+    var campaign = getStoredCampaign();
+    var params = new URLSearchParams();
+    params.set("src", src);
+    if (campaign) params.set("campaign", campaign);
+    params.set("via", "pages");
+
+    return (
+      base +
+      "/go/" +
+      encodeURIComponent(String(appId)) +
+      "?" +
+      params.toString()
+    );
+  }
+
+  function storeFallbackUrl(app) {
+    var links = app && app.links ? app.links : {};
+    var platforms = Array.isArray(app.platforms) ? app.platforms : [];
+
+    for (var i = 0; i < platforms.length; i += 1) {
+      var url = links[platforms[i]];
+      if (typeof url === "string" && url.trim() !== "" && url.trim() !== "#") {
         return url.trim();
       }
     }
-
-    if (typeof links.ios === "string" && links.ios.trim() !== "") {
+    if (typeof links.ios === "string" && links.ios.trim() && links.ios.trim() !== "#") {
       return links.ios.trim();
     }
-    if (typeof links.android === "string" && links.android.trim() !== "") {
+    if (typeof links.android === "string" && links.android.trim() && links.android.trim() !== "#") {
       return links.android.trim();
     }
-    if (typeof links.web === "string" && links.web.trim() !== "") {
+    if (typeof links.web === "string" && links.web.trim() && links.web.trim() !== "#") {
       return links.web.trim();
     }
-
     return "#";
   }
 
   /**
-   * Ponto único para abrir um aplicativo.
-   * Quando o redirect de tracking existir, altere apenas resolveAppUrl / openApp.
+   * Preferência: tracking /go com via=pages.
+   * Fallback: link da loja (se trackingBaseUrl não configurado).
    */
-  function openApp(app, source) {
-    const src = source || "github-pages";
-    const url = resolveAppUrl(app, src);
+  function resolveAppUrl(app) {
+    var go = buildGoUrl(app && app.id);
+    if (go) return go;
+    return storeFallbackUrl(app);
+  }
 
-    if (!url || url === "#") {
-      return;
-    }
-
+  function openApp(app) {
+    var url = resolveAppUrl(app);
+    if (!url || url === "#") return;
     window.open(url, "_blank", "noopener,noreferrer");
   }
 
@@ -70,7 +149,7 @@
   }
 
   function primaryPlatform(app) {
-    const platforms = Array.isArray(app.platforms) ? app.platforms : [];
+    var platforms = Array.isArray(app.platforms) ? app.platforms : [];
     if (platforms.length) return String(platforms[0]).toLowerCase();
     if (app.links && app.links.ios) return "ios";
     if (app.links && app.links.android) return "android";
@@ -99,56 +178,72 @@
   }
 
   function createCard(app, index) {
-    const article = document.createElement("article");
+    var article = document.createElement("article");
     article.className = "app-row" + (app.featured ? " is-featured" : "");
     article.dataset.appId = app.id || "";
 
-    const name = escapeHtml(app.name || "App");
-    const subtitle = escapeHtml(app.subtitle || "");
-    const description = escapeHtml(app.description || "");
-    const icon = escapeHtml(app.icon || "");
-    const status = app.status || "coming-soon";
-    const platform = primaryPlatform(app);
-    const number = String(index + 1).padStart(2, "0");
+    var name = escapeHtml(app.name || "App");
+    var subtitle = escapeHtml(app.subtitle || "");
+    var description = escapeHtml(app.description || "");
+    var icon = escapeHtml(app.icon || "");
+    var status = app.status || "coming-soon";
+    var platform = primaryPlatform(app);
+    var number = String(index + 1).padStart(2, "0");
 
-    const qrBlock = hasQrCode(app)
-      ? `<figure class="app-qr">
-           <img src="${escapeHtml(app.qrCode.trim())}" alt="QR Code para abrir ${name}" width="72" height="72" />
-           <figcaption>Escaneie para abrir</figcaption>
-         </figure>`
+    var qrBlock = hasQrCode(app)
+      ? '<figure class="app-qr">' +
+        '<img src="' +
+        escapeHtml(app.qrCode.trim()) +
+        '" alt="QR Code para abrir ' +
+        name +
+        '" width="72" height="72" />' +
+        "<figcaption>Escaneie para abrir</figcaption></figure>"
       : "";
 
-    let actionHtml;
+    var actionHtml;
     if (canDownload(app)) {
-      const label = storeLinkLabel(platform);
-      actionHtml = `<div class="app-action">
-        <button type="button" class="app-store-link js-open-app">
-          <span class="link-label">${escapeHtml(label.replace(/\s*→\s*$/, ""))}</span>
-          <span class="link-arrow" aria-hidden="true">→</span>
-        </button>
-      </div>`;
+      var label = storeLinkLabel(platform);
+      actionHtml =
+        '<div class="app-action">' +
+        '<button type="button" class="app-store-link js-open-app">' +
+        '<span class="link-label">' +
+        escapeHtml(label.replace(/\s*→\s*$/, "")) +
+        "</span>" +
+        '<span class="link-arrow" aria-hidden="true">→</span>' +
+        "</button></div>";
     } else if (status === "development") {
-      actionHtml = `<div class="app-action"><p class="app-status-text">Em desenvolvimento</p></div>`;
+      actionHtml =
+        '<div class="app-action"><p class="app-status-text">Em desenvolvimento</p></div>';
     } else {
-      actionHtml = `<div class="app-action"><p class="app-status-text">Em breve</p></div>`;
+      actionHtml =
+        '<div class="app-action"><p class="app-status-text">Em breve</p></div>';
     }
 
-    article.innerHTML = `
-      <p class="app-index" aria-hidden="true">${number}</p>
-      <img class="app-icon" src="${icon}" alt="Ícone do aplicativo ${name}" width="118" height="118" loading="lazy" />
-      <div class="app-titles">
-        <h3 class="app-name">${name}</h3>
-        ${subtitle ? `<p class="app-subtitle">${subtitle}</p>` : ""}
-      </div>
-      ${description ? `<p class="app-description">${description}</p>` : `<p class="app-description"></p>`}
-      ${actionHtml}
-      ${qrBlock}
-    `;
+    article.innerHTML =
+      '<p class="app-index" aria-hidden="true">' +
+      number +
+      "</p>" +
+      '<img class="app-icon" src="' +
+      icon +
+      '" alt="Ícone do aplicativo ' +
+      name +
+      '" width="118" height="118" loading="lazy" />' +
+      '<div class="app-titles">' +
+      '<h3 class="app-name">' +
+      name +
+      "</h3>" +
+      (subtitle ? '<p class="app-subtitle">' + subtitle + "</p>" : "") +
+      "</div>" +
+      (description
+        ? '<p class="app-description">' + description + "</p>"
+        : '<p class="app-description"></p>') +
+      actionHtml +
+      qrBlock;
 
-    const openBtn = article.querySelector(".js-open-app");
+    var openBtn = article.querySelector(".js-open-app");
     if (openBtn) {
       openBtn.addEventListener("click", function () {
-        openApp(app, "github-pages");
+        openApp(app);
       });
     }
 
@@ -156,7 +251,7 @@
   }
 
   function setStatus(message, isError) {
-    const el = document.getElementById("apps-status");
+    var el = document.getElementById("apps-status");
     if (!el) return;
     el.hidden = false;
     el.textContent = message;
@@ -165,7 +260,7 @@
 
   function applySocialLinks() {
     Object.keys(SITE.social).forEach(function (key) {
-      const href = SITE.social[key];
+      var href = SITE.social[key];
       document.querySelectorAll('[data-social="' + key + '"]').forEach(function (link) {
         link.setAttribute("href", href || "#");
         if (href && href !== "#") {
@@ -182,23 +277,39 @@
     });
   }
 
+  async function loadTrackingConfig() {
+    try {
+      var response = await fetch("data/tracking-config.json", { cache: "no-cache" });
+      if (!response.ok) return;
+      var cfg = await response.json();
+      if (cfg && typeof cfg.trackingBaseUrl === "string" && cfg.trackingBaseUrl.trim()) {
+        SITE.trackingBaseUrl = cfg.trackingBaseUrl.trim().replace(/\/+$/, "");
+      }
+      if (cfg && typeof cfg.pagesUrl === "string" && cfg.pagesUrl.trim()) {
+        SITE.pagesUrl = cfg.pagesUrl.trim();
+      }
+    } catch (err) {
+      console.warn("tracking-config.json não carregado", err);
+    }
+  }
+
   async function loadApps() {
-    const grid = document.getElementById("apps-grid");
+    var grid = document.getElementById("apps-grid");
     if (!grid) return;
 
     try {
-      const response = await fetch("data/apps.json", { cache: "no-cache" });
+      var response = await fetch("data/apps.json", { cache: "no-cache" });
       if (!response.ok) {
         throw new Error("HTTP " + response.status);
       }
 
-      const apps = await response.json();
+      var apps = await response.json();
       if (!Array.isArray(apps)) {
         throw new Error("apps.json deve ser um array");
       }
 
       grid.replaceChildren();
-      let index = 0;
+      var index = 0;
       apps.forEach(function (app) {
         if (app && typeof app === "object") {
           grid.appendChild(createCard(app, index));
@@ -207,7 +318,7 @@
       });
 
       grid.hidden = false;
-      const status = document.getElementById("apps-status");
+      var status = document.getElementById("apps-status");
       if (status) status.hidden = true;
     } catch (err) {
       console.error("Falha ao carregar data/apps.json:", err);
@@ -219,15 +330,18 @@
     }
   }
 
-  function init() {
+  async function init() {
+    captureTrafficAttribution();
     applySocialLinks();
-    loadApps();
+    await loadTrackingConfig();
+    await loadApps();
   }
 
-  // Exposto para inspeção / evolução futura do tracking
   window.MeusApps = {
     openApp: openApp,
     resolveAppUrl: resolveAppUrl,
+    buildGoUrl: buildGoUrl,
+    captureTrafficAttribution: captureTrafficAttribution,
   };
 
   if (document.readyState === "loading") {
