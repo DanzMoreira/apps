@@ -28,5 +28,20 @@
     "links": {
       "ios": "https://apps.apple.com/us/app/cosmos/id6792531471?uo=4"
     }
+  },
+  {
+    "id": "dev-backlog",
+    "name": "Dev Backlog",
+    "subtitle": "Developer Tools",
+    "description": "Dev Backlog is a minimalist app for developers to organize ideas, improvements, and bugs while working on their projects.\n\nCreate a project for each app you're building and capture everything you need to do later —…",
+    "icon": "assets/icons/dev-backlog.png",
+    "platforms": [
+      "ios"
+    ],
+    "status": "published",
+    "featured": false,
+    "links": {
+      "ios": "https://apps.apple.com/br/app/dev-backlog/id6794895680?uo=4"
+    }
   }
 ]
